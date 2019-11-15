@@ -1,0 +1,73 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0'
+    }
+	
+	ext {
+		junit_jupiter_version = '5.2.0'
+		junit_platform_version = '1.2.0'
+	}
+}
+
+plugins {
+	id 'java'
+	id 'application'
+	id 'eclipse'
+}
+
+apply plugin: 'org.junit.platform.gradle.plugin'
+
+version = 1.0
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    jcenter()
+	mavenCentral()
+}
+
+dependencies {
+
+    // This dependency is used internally, and not exposed to consumers on their own compile classpath.
+    implementation 'com.google.guava:guava:28.0-jre'
+
+    testImplementation 'junit:junit:4.12'
+		testCompile (
+		"org.junit.jupiter:junit-jupiter-api:${junit_jupiter_version}",
+		"org.junit.jupiter:junit-jupiter-params:${junit_jupiter_version}",
+		"org.junit.platform:junit-platform-launcher:${junit_platform_version}",
+		"org.junit.platform:junit-platform-engine:${junit_platform_version}",
+		"org.junit.platform:junit-platform-runner:${junit_platform_version}",
+		"org.junit.platform:junit-platform-suite-api:${junit_platform_version}"
+	)
+	
+	testRuntime(
+		"org.junit.jupiter:junit-jupiter-engine:${junit_jupiter_version}",
+        "org.junit.vintage:junit-vintage-engine:${junit_jupiter_version}"
+    )		
+}
+
+jar {
+  manifest {
+    attributes 'Main-Class': ''
+	//  'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
+  }
+  
+  baseName = project.name
+  from {
+	configurations.compile.collect {
+		it.isDirectory() ? it : zipTree(it)
+	}
+  } into ''
+  
+  // from { configurations.compile } into ''
+}
+
+junitPlatformTest {
+	junitPlatform {
+		details 'VERBOSE'
+	}
+}
