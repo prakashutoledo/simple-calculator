@@ -3,38 +3,30 @@ apply plugin: 'java-library'
 project.ext {
 	junit_jupiter_version = '5.2.0'
 	junit_platform_version = '1.2.0'
+	fxMainClass = 'simple.calculator.evaluator.application.JavaFXApplication'
+	fxmlMainClass = 'simple.calculator.evaluator.application.JavaFXFxmlApplication'
+	swingMainClass = 'simple.calculator.evaluator.application.JavaSwingApplication'
+	defaultMainClass = 'simple.calculator.evaluator.InfixEvaluatorDriver'
+	swingJarName = project.name + "-swing"
+	fxJarName = project.name + "-fx"
+	fxmlJarName = project.name + "-fxml"
+	mainJarName = project.name + "-main"
 }
-
 
 version = 1.0
 sourceCompatibility = 12
 targetCompatibility = 12
-
 
 repositories {
     jcenter()
 	mavenCentral()
 }
 
+dependencies {	
+	testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_jupiter_version}"
+	testImplementation "org.junit.jupiter:junit-jupiter-params:${junit_jupiter_version}"
 
-
-dependencies {
-
-    // This dependency is used internally, and not exposed to consumers on their own compile classpath.
-    implementation 'com.google.guava:guava:28.0-jre'
-	
-	testImplementation (
-		"org.junit.jupiter:junit-jupiter-api:${junit_jupiter_version}",
-		"org.junit.jupiter:junit-jupiter-params:${junit_jupiter_version}",
-		"org.junit.platform:junit-platform-launcher:${junit_platform_version}",
-		"org.junit.platform:junit-platform-engine:${junit_platform_version}",
-		"org.junit.platform:junit-platform-runner:${junit_platform_version}",
-		"org.junit.platform:junit-platform-suite-api:${junit_platform_version}"
-	)
-	
-	testRuntimeOnly(
-		"org.junit.jupiter:junit-jupiter-engine:${junit_jupiter_version}",
-    )		
+	testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_jupiter_version}"
 }
 
 
@@ -50,82 +42,65 @@ test {
    }
 }
 
-task(runFXFxmlUIMain, dependsOn: 'classes', type: JavaExec) {
-	main = 'simple.calculator.evaluator.application.JavaFXFxmlApplication'
-	classpath =sourceSets.main.runtimeClasspath
-}
+task(runFXUIMain, dependsOn: 'classes', type: JavaExec, generateRunTaskClosure("${fxMainClass}"))
 
-task(runFXUIMain, dependsOn: 'classes', type: JavaExec) {
-	main = 'simple.calculator.evaluator.application.JavaFXApplication'
-	classpath =sourceSets.main.runtimeClasspath
-}
+task(runSwingUIMain, dependsOn: 'classes', type: JavaExec, generateRunTaskClosure("${swingMainClass}"))
 
-task(runSwingUIMain, dependsOn: 'classes', type: JavaExec) {
-	main = 'simple.calculator.evaluator.application.SwingApplication'
-	classpath =sourceSets.main.runtimeClasspath
-}
+task(runMainWithArgs, dependsOn: 'classes', type: JavaExec, generateRunTaskClosure("${defaultMainClass}", 'AUTO'))
 
-task(runMainWithArgs, dependsOn: 'classes', type: JavaExec) {
-	main = 'simple.calculator.evaluator.InfixEvaluatorDriver'
-	classpath =sourceSets.main.runtimeClasspath
-	args "AUTO"
-}
+task(runMainWithInput, dependsOn: 'classes', type: JavaExec, generateRunTaskClosure("${defaultMainClass}", null, true))
 
-task(runMainWithInput, dependsOn: 'classes', type: JavaExec) {
-	main = 'simple.calculator.evaluator.InfixEvaluatorDriver'
-	classpath =sourceSets.main.runtimeClasspath
-	standardInput System.in
-}
+task(runFXFxmlUIMain, dependsOn: 'classes', type: JavaExec, generateRunTaskClosure("${fxmlMainClass}"))
 
-task(createFXJar, dependsOn: 'classes', type: Jar) {
-  	manifest {
-    	attributes ('Main-Class': 'simple.calculator.evaluator.application.JavaFXApplication',
-			'Class-Path': configurations.compileClasspath.collect { it.getName() }.join(' '))
-  	}
+task(createFXJar, dependsOn: 'classes', type: Jar, generateJarTaskClosure("${fxJarName}", "${fxMainClass}"))
+
+task(createFXMLJar, dependsOn: 'classes', type: Jar, generateJarTaskClosure("${fxmlJarName}", "${fxmlMainClass}"))
+
+task(createSwingJar, dependsOn: 'classes', type: Jar, generateJarTaskClosure("${swingJarName}", "${swingMainClass}"))
+
+jar generateJarTaskClosure("${mainJarName}", "${defaultMainClass}")
+
+def generateJarTaskClosure(String jarName, String mainClassName) {
+	if(!jarName) {
+		throw new NullPointerException("Not a valid jarName")
+	}
+	
+	if(!mainClassName) {
+		throw new NullPointerException("Not a valid mainClassName")
+	}
+	
+	return {
+		manifest {
+    		attributes ('Main-Class': "${mainClassName}",
+				'Class-Path': configurations.compileClasspath.collect { it.getName() }.join(' '))
+  		}
   
-  	archiveBaseName = project.name + "-fx"
-   	destinationDir = file("${buildDir}/libs")
-   	
-	from  sourceSets.main.output  
-    
+  		archiveBaseName = "${jarName}"
+   		destinationDir = file("${buildDir}/libs")
+   		
+		from sourceSets.main.output  
+	}
 }
 
-task(createFXMLJar, dependsOn: 'classes', type: Jar) {
-  	manifest {
-    	attributes ('Main-Class': 'simple.calculator.evaluator.application.JavaFXFxmlApplication',
-			'Class-Path': configurations.compileClasspath.collect { it.getName() }.join(' '))
-  	}
-  
-  	archiveBaseName = project.name + "-fxml"
-   	destinationDir = file("${buildDir}/libs")
-   	
-	from sourceSets.main.output  
+def generateRunTaskClosure(String mainClassName, String arguments = null, boolean doNeedInput = false) {
+	if(!mainClassName) {
+		throw new NullPointerException("Invalid main name")
+	}
+	
+	return {
+		main = "${mainClassName}"
+		classpath =sourceSets.main.runtimeClasspath
+		
+		if(arguments) {
+			args "${arguments}"
+		}
+		
+		if(doNeedInput) {
+			standardInput System.in
+		}
+	}
 }
 
-task(createSwingJar, dependsOn: 'classes', type: Jar) {
-  	manifest {
-    	attributes ('Main-Class': 'simple.calculator.evaluator.application.JavaSwingApplication',
-			'Class-Path': configurations.compileClasspath.collect { it.getName() }.join(' '))
-  	}
-  
-  	archiveBaseName = project.name + "-fxml"
-   	destinationDir = file("${buildDir}/libs")
-   	
-	from sourceSets.main.output  
-}
+jar.dependsOn 'createFXMLJar', 'createFXJar', 'createSwingJar'
 
-jar {
-	manifest {
-    	attributes ('Main-Class': 'simple.calculator.evaluator.InfixEvaluatorDriver',
-			'Class-Path': configurations.compileClasspath.collect { it.getName() }.join(' '))
-  	}
-  
-  	archiveBaseName = project.name
-   	destinationDir = file("${buildDir}/libs")
-   	
-	from sourceSets.main.output  
-}
-
-jar.dependsOn 'createFXMLJar', 'createFXJar'
-
-defaultTasks 'clean', 'build', 'runFXFxmlUIMain'
+defaultTasks 'clean', 'build', 'runFXUIMain'
