@@ -1,36 +1,22 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0'
-    }
-	
-	ext {
-		junit_jupiter_version = '5.2.0'
-		junit_platform_version = '1.2.0'
-	}
+apply plugin: 'java-library'
+
+project.ext {
+	junit_jupiter_version = '5.2.0'
+	junit_platform_version = '1.2.0'
 }
 
-plugins {
-	id 'java'
-	id 'application'
-	id 'eclipse'
-}
-
-apply plugin: 'org.junit.platform.gradle.plugin'
 
 version = 1.0
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 12
+targetCompatibility = 12
 
-
-mainClassName = 'simple.calculator.evaluator.EvaluatorUI'
 
 repositories {
     jcenter()
 	mavenCentral()
 }
+
+
 
 dependencies {
 
@@ -38,7 +24,6 @@ dependencies {
     implementation 'com.google.guava:guava:28.0-jre'
 	
 	testImplementation (
-		"junit:junit:4.12",
 		"org.junit.jupiter:junit-jupiter-api:${junit_jupiter_version}",
 		"org.junit.jupiter:junit-jupiter-params:${junit_jupiter_version}",
 		"org.junit.platform:junit-platform-launcher:${junit_platform_version}",
@@ -49,27 +34,24 @@ dependencies {
 	
 	testRuntimeOnly(
 		"org.junit.jupiter:junit-jupiter-engine:${junit_jupiter_version}",
-        "org.junit.vintage:junit-vintage-engine:${junit_jupiter_version}"
     )		
 }
 
 
-junitPlatformTest {
-	junitPlatform {
-		details 'VERBOSE'
-	}
+test {
+	useJUnitPlatform()
 }
 
-
 task(runEvaluaterUIMain, dependsOn: 'classes', type: JavaExec) {
-	main = 'simple.calculator.evaluator.EvaluatorUI'
+	main = 'simple.calculator.evaluator.application.JavaFXFxmlApplication'
 	classpath =sourceSets.main.runtimeClasspath
 }
 
-jar {
+
+/*jar {
   manifest {
     attributes (
-    'Main-Class': 'simple.calculator.evaluator.EvaluatorUI',
+    'Main-Class': 'simple.calculator.evaluator.SwingApplication',
 	'Class-Path': configurations.compileClasspath.collect { it.getName() }.join(' '))
   }
   
@@ -84,5 +66,5 @@ jar {
   //into ''
   
   from  configurations.compileClasspath  into ''
-}
-defaultTasks 'junitPlatformTest', 'build', 'jar', 'runEvaluaterUIMain'
+}*/
+defaultTasks 'clean', 'build', 'runEvaluaterUIMain'

@@ -16,7 +16,6 @@ public class PowerOperator extends Operator {
 
 	@Override
 	public String operator() {
-		// TODO Auto-generated method stub
 		return "^";
 	}
 	

@@ -68,6 +68,7 @@ public class Evaluator {
 				while (!operatorStack.empty() && operatorStack.peek().priority() >= newOperator.priority()) {
 					Operator oldOpr = null;
 					Operand op1 = null, op2 = null;
+					
 					if(!operatorStack.isEmpty()) {
 						oldOpr= operatorStack.pop();
 					} else {
