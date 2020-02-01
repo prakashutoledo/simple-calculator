@@ -18,14 +18,30 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
-import simple.calculator.evaluator.Evaluator;
+import simple.calculator.evaluator.InfixEvaluator;
 import simple.calculator.evaluator.ui.NumberEnum;
 
+
+/**
+ * Main class for running JavaFX implementation of simple calculator.
+ * All the required root pane is added by childrens which then add into parent 
+ * or treated as parent to create a new scene which is eventually added into stage to show.
+ * This implementation and {@link JavaFXFxmlApplication} implementation are 
+ * same with the only difference is required components for parent scene are loaded from
+ * source fxml file and here we need to create it explicitely and add into
+ * root or parent.
+ * 
+ * 
+ * @author Prakash Khadka
+ * 		   Created on: Feb 1, 2020
+ * 
+ * @see JavaFXFxmlApplication
+ */
 public class JavaFXApplication extends Application {
 	
-	private AnchorPane rootPane = new AnchorPane();
-	private GridPane gridPane = new GridPane();
-	private TextField textField = new TextField();
+	private final AnchorPane rootPane = new AnchorPane();
+	private final GridPane gridPane = new GridPane();
+	private final TextField textField = new TextField();
 	
 	
 	public static void main(String... args) {
@@ -38,17 +54,20 @@ public class JavaFXApplication extends Application {
 	 * 
 	 * @throws RuntimeException if invalid expression in input to user and equals to
 	 *                          button is clicked
-	 * 
+	 *                          
+	 * @throws IllegalArguentException if source targeting this event is instance of Button
 	 */
     private final EventHandler<ActionEvent> buttonClickedHandler = (event) -> {
-    	var button = (Button) event.getSource();
+    	if(!(event.getSource() instanceof Button)) throw new IllegalArgumentException("Event only supports FX Buttons");
     	
-		var infix = new Evaluator();
+    	var button = (Button) event.getSource();
+		var infixEvaluator = new InfixEvaluator();
+		
 		switch (button.getText().toUpperCase()) {
 		case "=": // performs calculation
 			try {
 				if (!this.textField.getText().isEmpty()) {
-					this.textField.setText(String.valueOf(infix.eval(this.textField.getText().trim())));
+					this.textField.setText(String.valueOf(infixEvaluator.evaluate(this.textField.getText().trim())));
 				}
 
 			} catch (RuntimeException ex) {
@@ -71,6 +90,9 @@ public class JavaFXApplication extends Application {
 		}
     };
 
+    /**
+     * {@inheritDoc}
+     */
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		rootPane.setPrefSize(400, 450);
@@ -118,7 +140,7 @@ public class JavaFXApplication extends Application {
 		
 		this.rootPane.getChildren().addAll(this.textField, this.gridPane);
 		
-		Scene scene = new Scene(this.rootPane, 400, 450);	
+		var scene = new Scene(this.rootPane, 400, 450);	
         primaryStage.setTitle("Calculator");
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);

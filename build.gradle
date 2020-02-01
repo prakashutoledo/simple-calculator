@@ -40,31 +40,92 @@ dependencies {
 
 test {
 	useJUnitPlatform()
+	
+	testLogging {
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+        exceptionFormat "full"
+        showExceptions true
+        showCauses true
+        showStackTraces true
+   }
 }
 
-task(runEvaluaterUIMain, dependsOn: 'classes', type: JavaExec) {
+task(runFXFxmlUIMain, dependsOn: 'classes', type: JavaExec) {
 	main = 'simple.calculator.evaluator.application.JavaFXFxmlApplication'
 	classpath =sourceSets.main.runtimeClasspath
 }
 
+task(runFXUIMain, dependsOn: 'classes', type: JavaExec) {
+	main = 'simple.calculator.evaluator.application.JavaFXApplication'
+	classpath =sourceSets.main.runtimeClasspath
+}
 
-/*jar {
-  manifest {
-    attributes (
-    'Main-Class': 'simple.calculator.evaluator.SwingApplication',
-	'Class-Path': configurations.compileClasspath.collect { it.getName() }.join(' '))
-  }
+task(runSwingUIMain, dependsOn: 'classes', type: JavaExec) {
+	main = 'simple.calculator.evaluator.application.SwingApplication'
+	classpath =sourceSets.main.runtimeClasspath
+}
+
+task(runMainWithArgs, dependsOn: 'classes', type: JavaExec) {
+	main = 'simple.calculator.evaluator.InfixEvaluatorDriver'
+	classpath =sourceSets.main.runtimeClasspath
+	args "AUTO"
+}
+
+task(runMainWithInput, dependsOn: 'classes', type: JavaExec) {
+	main = 'simple.calculator.evaluator.InfixEvaluatorDriver'
+	classpath =sourceSets.main.runtimeClasspath
+	standardInput System.in
+}
+
+task(createFXJar, dependsOn: 'classes', type: Jar) {
+  	manifest {
+    	attributes ('Main-Class': 'simple.calculator.evaluator.application.JavaFXApplication',
+			'Class-Path': configurations.compileClasspath.collect { it.getName() }.join(' '))
+  	}
   
-  archiveBaseName = project.name
+  	archiveBaseName = project.name + "-fx"
+   	destinationDir = file("${buildDir}/libs")
+   	
+	from  sourceSets.main.output  
+    
+}
+
+task(createFXMLJar, dependsOn: 'classes', type: Jar) {
+  	manifest {
+    	attributes ('Main-Class': 'simple.calculator.evaluator.application.JavaFXFxmlApplication',
+			'Class-Path': configurations.compileClasspath.collect { it.getName() }.join(' '))
+  	}
   
-  //from {
-	//configurations.compileClasspath.collect {
-		//it.isDirectory() ? it : zipTree(it)
-	//}
-  //} 
+  	archiveBaseName = project.name + "-fxml"
+   	destinationDir = file("${buildDir}/libs")
+   	
+	from sourceSets.main.output  
+}
+
+task(createSwingJar, dependsOn: 'classes', type: Jar) {
+  	manifest {
+    	attributes ('Main-Class': 'simple.calculator.evaluator.application.JavaSwingApplication',
+			'Class-Path': configurations.compileClasspath.collect { it.getName() }.join(' '))
+  	}
   
-  //into ''
+  	archiveBaseName = project.name + "-fxml"
+   	destinationDir = file("${buildDir}/libs")
+   	
+	from sourceSets.main.output  
+}
+
+jar {
+	manifest {
+    	attributes ('Main-Class': 'simple.calculator.evaluator.InfixEvaluatorDriver',
+			'Class-Path': configurations.compileClasspath.collect { it.getName() }.join(' '))
+  	}
   
-  from  configurations.compileClasspath  into ''
-}*/
-defaultTasks 'clean', 'build', 'runEvaluaterUIMain'
+  	archiveBaseName = project.name
+   	destinationDir = file("${buildDir}/libs")
+   	
+	from sourceSets.main.output  
+}
+
+jar.dependsOn 'createFXMLJar', 'createFXJar'
+
+defaultTasks 'clean', 'build', 'runFXFxmlUIMain'

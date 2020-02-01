@@ -3,28 +3,25 @@ package simple.calculator.evaluator;
 /**
  * Operand class used to represent an operand in a valid mathematical
  * expression.
+ * 
+ * @author Prakash Khadka
+ * 		   Created on: Feb 1, 2020
+ *
  */
 public class Operand {
-	/**
-	 * construct operand from string token.
-	 * 
-	 */
-
 	private int value;
 
 	public Operand(String token) {
 		this(Integer.parseInt(token));
 	}
 
-	/**
-	 * construct operand from integer
-	 */
 	public Operand(int value) {
 		this.value = value;
 	}
 
 	/**
-	 * return value of operand
+	 * 
+	 * @return a value of this operand 
 	 */
 	public int getValue() {
 		return this.value;
@@ -32,18 +29,13 @@ public class Operand {
 
 	/**
 	 * Check to see if given token is a valid operand.
+	 * 
+	 * @param token a string token to be checked
+	 * @return true if token matches number expression otherwise false 
 	 */
 	public static boolean check(String token) {
-		//As we are not handling any float types. So, this  parsing integer is
-		//more than enough to validate the string is Integer operand
-		
-		/*try {
-			Integer.parseInt(token);
-		} catch (NumberFormatException ex) {
-			return false;
-		}
-		return true;*/
-		
+		// No double value will be evaluated so need to handle double
+		// value matcher
 		return token.matches("^[0-9]+");
 	}
 }

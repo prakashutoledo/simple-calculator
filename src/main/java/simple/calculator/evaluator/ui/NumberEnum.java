@@ -2,15 +2,14 @@ package simple.calculator.evaluator.ui;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
+ * Enum representing all the available numbers or button keys for simple calculator 
+ * in all UI implementation including swing and JavaFX
  * 
- * @author coolb
- * 
- * @created on: Jan, 31, 2020
+ * @author Prakash Khadka
+ * 		   Created on: Feb 1, 2020
  *
  */
 public enum NumberEnum {
@@ -57,26 +56,63 @@ public enum NumberEnum {
 		this.column = column;
 	}
 
+	/**
+	 * Returns the row number to which this key is mapped into
+	 * JavaFX grid pane.
+	 * 
+	 * @return a row number for grid pane
+	 */
 	public int getRow() {
 		return row;
 	}
 
+	/**
+	 * Returns the column number to which this key is mapped to JavaFX
+	 * grid pane.
+	 * 
+	 * @return a column number for grid pane
+	 */
 	public int getColumn() {
 		return column;
 	}
 
+	/**
+	 * Returns a string text to be shown into buttons of calculator
+	 * grid pane
+	 * 
+	 * @return a text representation of this key
+	 */
 	public String getButtonText() {
 		return buttonText;
 	}
 
+	/**
+	 * Returns a description mapped for this key
+	 * 
+	 * @return a text representation of this key
+	 */
 	public String getDescription() {
 		return description;
 	}
 
+	/**
+	 * Returns a Integer value mapped for this key
+	 * 
+	 * @return a value
+	 */
 	public Integer getValue() {
 		return value;
 	}
 	
+	/**
+	 * Gets the equivalent enum represented by this text by looking from
+	 * button map
+	 * 
+	 * @param text a text to look up in map
+	 * @return {@link NumberEnum} represented with given text
+	 * 
+	 * @throws RuntimeException if text is not in the map
+	 */
 	public static NumberEnum fromButtonText(final String text) {
 		return BUTTON_MAP.compute(text, (key, value) -> {
 			System.out.println(key);

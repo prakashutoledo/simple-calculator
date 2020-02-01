@@ -1,14 +1,18 @@
 package simple.calculator.evaluator.application;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.HashMap;
 
-import simple.calculator.evaluator.ui.NumberEnum;
 import simple.calculator.evaluator.ui.SwingUI;
 
-public class SwingApplication {
+/**
+ * Main class for running Swing implementation of simple calculator
+ * 
+ * @author Prakash Khadka
+ * 	       Created on: Feb 1, 2020
+ *
+ */
+public class JavaSwingApplication {
+	
 	public static void main(String... args) throws IOException {
 		System.out.println("Hello Starting Calculator");
 		new SwingUI();

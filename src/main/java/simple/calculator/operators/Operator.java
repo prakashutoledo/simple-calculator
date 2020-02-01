@@ -3,10 +3,22 @@ package simple.calculator.operators;
 import simple.calculator.evaluator.Operand;
 
 import java.util.HashMap;
+import java.util.Map;
 
+/**
+ * Abstract class representing available operators to use during 
+ * the runtime of the program. Priority level represents the execution level
+ * of two given operands or groups to be evaluated first. Higher int value
+ * represents higher priority than lower positive int value
+ * 
+ * 
+ * @author Prakash Khadka
+ * 		   Created on: Feb 1, 2020
+ *
+ */
 public abstract class Operator {
 
-	private static HashMap<String, Operator> operators = new HashMap<>();
+	private static Map<String, Operator> operators = new HashMap<>();
 	
 	static {
 		operators.put("+", new AddOperator());

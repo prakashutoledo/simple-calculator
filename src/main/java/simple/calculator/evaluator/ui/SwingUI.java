@@ -7,20 +7,23 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Panel;
 import java.awt.TextField;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
 
-import simple.calculator.evaluator.Evaluator;
+import simple.calculator.evaluator.InfixEvaluator;
 
+/**
+ * This class implementation is Java Swing implementation of simple calculator with
+ * minimal feature.
+ * 
+ * @author Prakash Khadka
+ * 		   Created on: Feb 1, 2020
+ *
+ */
 public class SwingUI extends JFrame {
 
 	private static final long serialVersionUID = -4636813572868218797L;
@@ -37,12 +40,12 @@ public class SwingUI extends JFrame {
 	 *                          button is clicked
 	 */
 	ActionListener butttonClickedListener = event -> {
-		var infix = new Evaluator();
+		var infixEvaluator = new InfixEvaluator();
 		switch (event.getActionCommand().toUpperCase()) {
 		case "=": // performs calculation
 			try {
 				if (this.textField.getText() != null && !this.textField.getText().isEmpty()) {
-					this.textField.setText(String.valueOf(infix.eval(this.textField.getText().trim())));
+					this.textField.setText(String.valueOf(infixEvaluator.evaluate(this.textField.getText().trim())));
 				}
 
 			} catch (RuntimeException ex) {
@@ -75,6 +78,9 @@ public class SwingUI extends JFrame {
 
 	}
 
+	/**
+	 * Sets the swing components to be available in UI with action listener set for buttons
+	 */
 	private void setUI() {
 		this.setTextFieldParameters();
 		add(this.textField, BorderLayout.NORTH);

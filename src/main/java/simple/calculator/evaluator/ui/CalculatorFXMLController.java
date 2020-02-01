@@ -14,8 +14,17 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import simple.calculator.evaluator.Evaluator;
+import simple.calculator.evaluator.InfixEvaluator;
 
+/**
+ * FXML controller for @{file calculator.fxml}.
+ * Source FXML is found inside the same package as this controller is at but
+ * in resource folder.
+ *  
+ * @author Prakash Khadka
+ * 		   Created on: Feb 1, 2020
+ *
+ */
 public class CalculatorFXMLController implements Initializable {
 	
     @FXML
@@ -39,12 +48,12 @@ public class CalculatorFXMLController implements Initializable {
     private final EventHandler<ActionEvent> buttonClickedHandler = (event) -> {
     	var button = (Button) event.getSource();
     	
-		var infix = new Evaluator();
+		var infixEvaluator = new InfixEvaluator();
 		switch (button.getText().toUpperCase()) {
 		case "=": // performs calculation
 			try {
 				if (!this.textField.getText().isEmpty()) {
-					this.textField.setText(String.valueOf(infix.eval(this.textField.getText().trim())));
+					this.textField.setText(String.valueOf(infixEvaluator.evaluate(this.textField.getText().trim())));
 				}
 
 			} catch (RuntimeException ex) {
