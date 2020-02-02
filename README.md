@@ -10,7 +10,7 @@ All 4 jars will be available after the sucessful build. You can run ```java -jar
 This project requires Java-12 and JFX-13 to build. So, make sure you have already added them as environment variables or by some other mean otherwise
 build will fail.
 
-task runFXUIMain``` will run calculator UI implemented with JavaFX. To run this hit
+task ```runFXUIMain``` will run calculator UI implemented with JavaFX. To run this hit
 ```./gradlew or gradlew runFXUIMain``` to run.
 task ```runFXMLMain``` will run calculator UI implemented with JavaFX FXML.
 task ```runSwingMain``` will run calculator UI implemented with Java Swing.
